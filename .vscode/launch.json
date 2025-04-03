@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // IntelliSense を使用して、C# デバッグに存在する属性を確認します
+            // 既存の属性の説明にホバーを使用する
+            // 詳細については、https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md を参照してください
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-console",
+            // ターゲット フレームワークを変更した場合は、プログラム パスを更新するようにしてください。
+            "program": "${workspaceFolder}/SimpleFileManager.ConsoleApp/bin/Debug/net9.0/SimpleFileManager.ConsoleApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SimpleFileManager.ConsoleApp",
+            // 'console' フィールドの詳細については、https://aka.ms/VSCode-CS-LaunchJson-Console を参照してください
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "symbolSearchPath": "${workspaceFolder}/SimpleFileManager.Lib/bin/Debug/net9.0/"
+        },
+        {
+            "name": ".NET Core Launch (WPF)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-wpf",
+            "program": "${workspaceFolder}/SimpleFileManager.WPFApp/bin/Debug/net9.0-windows/SimpleFileManager.WPFApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SimpleFileManager.WPFApp",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "symbolSearchPath": "${workspaceFolder}/SimpleFileManager.Lib/bin/Debug/net9.0/"
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "複合デバッグ",
+            "configurations": [".NET Core Launch (WPF)", ".NET Core Launch (console)"]
+        }
+    ]    
+}
