@@ -10,8 +10,5 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-
-        var str = MayworkNet.Lib.Class1.Hello();
-        System.Diagnostics.Debug.Print($"{str}");
     }
 }

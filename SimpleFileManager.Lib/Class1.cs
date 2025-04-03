@@ -1,4 +1,4 @@
-﻿namespace MayworkNet.Lib;
+﻿namespace FileSystemModel.Lib;
 
 public class Class1
 {

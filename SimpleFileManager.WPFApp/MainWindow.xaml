@@ -5,8 +5,76 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleFileManager.WPFApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" FontSize="16"
+        xmlns:converter="clr-namespace:SimpleFileManager.WPFApp.Converter"
+        xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+        xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+        xmlns:behavior="clr-namespace:SimpleFileManager.WPFApp.Behavior">
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+
+    <i:Interaction.Behaviors>
+        <behavior:WindowCloseBehavior />
+    </i:Interaction.Behaviors>
+
+    <Window.Resources>
+        <converter:DateTimeConverter x:Key="DateTimeConverter"/>
+        <converter:DateSizeConverter x:Key="DateSizeConverter"/>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <interactivity:EventToReactiveCommand Command="{Binding WindowLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
+
+        <ListView
+            x:Name="FileListView"
+            ItemsSource="{Binding FileInfos}"
+            SelectedValue ="{Binding FileListViewSelected.Value}">
+            <ListView.Resources>
+                <Style x:Key="listviewHeaderStyle" TargetType="GridViewColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.Resources>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <interactivity:EventToReactiveCommand Command="{Binding FilesListViewDoubleClickCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource listviewHeaderStyle}">
+                    <GridViewColumn Width="300" Header="名前">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="32" Height="32" Source="{Binding Icon}"></Image>
+                                    <TextBlock Width="Auto" TextAlignment="Left" Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="Auto" Header="更新日時">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="130" TextAlignment="Right" Text="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="Auto" Header="サイズ">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Width="120" TextAlignment="Right" Text="{Binding Length, Converter={StaticResource DateSizeConverter}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
     </Grid>
 </Window>
