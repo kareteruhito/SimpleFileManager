@@ -21,11 +21,22 @@ public class FileSystemModel
     /// ドライブリスト
     /// </summary>
     List<FileSystemModel.Info> DriveList = [];
+
+    string _currentDirectory = "";
     /// <summary>
     ///  カレントディレクトリ
     /// </summary>
-    public string CurrentDirectory { get; set; }
-        = Directory.GetCurrentDirectory();
+    public string CurrentDirectory
+    {
+        get
+        {
+            return _currentDirectory;
+        }
+        set
+        {
+            _currentDirectory = value;
+        }
+    }
     /// <summary>
     /// コンストラクタ
     /// </summary>

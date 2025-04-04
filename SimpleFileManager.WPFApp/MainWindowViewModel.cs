@@ -25,7 +25,11 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     public ReactiveCollection<FileInfoEntity> FileInfos { get; set; } = [];
     public ReactiveProperty<FileInfoEntity> FileListViewSelected { get; set; } = new();
 
-    readonly Lib.FileSystemModel fileSystemModel = new();
+    //@"\\celeron-n4000.local\archives",
+    readonly Lib.FileSystemModel fileSystemModel = new()
+    {
+        CurrentDirectory = @"C:\",
+    };
 
     /// <summary>
     /// コンストラクタ
