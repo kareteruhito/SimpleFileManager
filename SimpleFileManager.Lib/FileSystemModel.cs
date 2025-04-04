@@ -109,7 +109,7 @@ public class FileSystemModel
     /// </summary>;
     void UpdateDriveList()
     {
-        if (DriveList.Count == 0) DriveList.Clear();
+        if (DriveList.Count > 0) DriveList.Clear();
 
         foreach(var drive in DriveInfo.GetDrives())
         {
