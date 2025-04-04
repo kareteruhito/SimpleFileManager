@@ -10,4 +10,24 @@ public class FileInfoEntity
     public DateTime LastModified { get; set; } = new DateTime();
     public long Length { get; set; } = -1;
     public System.IO.FileAttributes Attribute { get; set; } = System.IO.FileAttributes.None;
+    public string SortName
+    {
+        get
+        {
+            string prefix = "5_";
+            if ((Attribute & System.IO.FileAttributes.Directory) != 0)
+            {
+                if (".." == Name)
+                {
+                    prefix = "1_";
+                }
+                else
+                {
+                    prefix = "3_";
+                }
+
+            }
+            return prefix + Name;
+        }
+    }
 }

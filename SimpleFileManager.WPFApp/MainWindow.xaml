@@ -34,6 +34,11 @@
             x:Name="FileListView"
             ItemsSource="{Binding FileInfos}"
             SelectedValue ="{Binding FileListViewSelected.Value}">
+<!-- ソートビヘイビア ここから -->
+            <i:Interaction.Behaviors>
+                <behavior:ListViewSortBehavior />
+            </i:Interaction.Behaviors>
+<!-- ソートビヘイビア ここまで -->
             <ListView.Resources>
                 <Style x:Key="listviewHeaderStyle" TargetType="GridViewColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -48,7 +53,10 @@
 
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource listviewHeaderStyle}">
-                    <GridViewColumn Width="300" Header="名前">
+<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName SortName-->
+                    <GridViewColumn Width="300"
+                        behavior:ListViewSortBehavior.SortPropertyName="SortName"
+                        Header="名前">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -58,14 +66,20 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="Auto" Header="更新日時">
+<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName LastModified-->
+                    <GridViewColumn Width="Auto"
+                        behavior:ListViewSortBehavior.SortPropertyName="LastModified"
+                        Header="更新日時">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Width="130" TextAlignment="Right" Text="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="Auto" Header="サイズ">
+<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName Length-->
+                    <GridViewColumn Width="Auto"
+                        behavior:ListViewSortBehavior.SortPropertyName="Length"
+                        Header="サイズ">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Width="120" TextAlignment="Right" Text="{Binding Length, Converter={StaticResource DateSizeConverter}}" />

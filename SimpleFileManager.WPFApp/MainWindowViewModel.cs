@@ -111,6 +111,8 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     {
         // ダブルクリックイベント
         var item = FileListViewSelected.Value;
+        if (item is null) return;
+        
 //System.Diagnostics.Debug.Print($"ダブルクリック{item.FullPath}");
         if ((item.Attribute & FileAttributes.Directory) != 0)
         {
