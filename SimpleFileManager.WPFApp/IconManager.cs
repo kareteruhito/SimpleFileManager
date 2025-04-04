@@ -2,12 +2,38 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
+using System.Collections.Concurrent;
+using System.Windows.Markup;
 
 namespace SimpleFileManager.WPFApp;
 public class IconManager
 {
+    static ConcurrentDictionary<string, BitmapImage> IconDict = [];
+
     static public BitmapImage GetIcon(string path)
     {
+
+        string extKey = Path.GetExtension(path).ToUpper();
+        if (path == "DRIVE")
+        {
+            extKey = ".DRIVE";
+        }
+        if (extKey == "")
+        {
+            if (File.Exists(path))
+            {
+                extKey = ".DIR";
+            }
+            else
+            {
+                extKey = ".FILE";
+            }
+        }
+        if (IconDict.ContainsKey(extKey))
+        {
+            return IconDict[extKey];
+        }
+
         string systemRoot = Environment.GetEnvironmentVariable("SystemRoot") ?? @"C:\Windows";
         string dllPath = Path.Join(systemRoot, @"System32\SHELL32.dll");
 
@@ -44,6 +70,8 @@ public class IconManager
 
         ms.SetLength(0);
 
-        return bi;
+        IconDict[extKey] = bi;
+
+        return IconDict[extKey];
     }
 }

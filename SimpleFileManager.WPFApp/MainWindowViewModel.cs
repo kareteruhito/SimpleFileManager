@@ -7,6 +7,7 @@ using Reactive.Bindings.Extensions;
 using Microsoft.VisualBasic;
 using System.Reflection.Metadata.Ecma335;
 using System.Diagnostics;
+using System.Windows;
 
 namespace SimpleFileManager.WPFApp;
 /// <summary>
@@ -57,7 +58,6 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             var tcs = new TaskCompletionSource<bool>();
             var v = FileInfos.ObserveResetChanged<int>().Subscribe(x=>
             {
-                Debug.Print("クリア");
                 tcs.SetResult(true);
             });
             FileInfos.ClearOnScheduler();
@@ -65,7 +65,6 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             v.Dispose();
         }
 
-        Debug.Print("追加");
         if (fileSystemModel.IsRoot() == false)
         {
             string parentDir = Path.GetDirectoryName(fileSystemModel.CurrentDirectory) ?? "/";
@@ -80,28 +79,33 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
                 }
             );
         }
-        foreach(var f in fileSystemModel.GetFiles())
-        {
-            string name = Path.GetFileName(f.FullName);
-            string fullName = f.FullName;
-            if (name == "")
+
+        try {
+            foreach(var f in fileSystemModel.GetFiles())
             {
-                name = f.FullName;
-                fullName = "DRIVE";
-            }
-            FileInfos.AddOnScheduler
-            (
-                new()
+                string name = Path.GetFileName(f.FullName);
+                string fullName = f.FullName;
+                if (name == "")
                 {
-                    Icon = IconManager.GetIcon(fullName),
-                    Name = name,
-                    FullPath = f.FullName,
-                    LastModified = f.LastModified,
-                    Length = f.Length,
-                    Attribute = f.Attributes,
+                    name = f.FullName;
+                    fullName = "DRIVE";
                 }
-            );
-        }               
+                FileInfos.AddOnScheduler
+                (
+                    new()
+                    {
+                        Icon = IconManager.GetIcon(fullName),
+                        Name = name,
+                        FullPath = f.FullName,
+                        LastModified = f.LastModified,
+                        Length = f.Length,
+                        Attribute = f.Attributes,
+                    }
+                );
+            }
+        } catch (System.UnauthorizedAccessException ex ) {
+            MessageBox.Show(ex.Message);
+        }
     }
     /// <summary>
     /// FilesListViewDoubleClickCommand_Subscribe
@@ -113,7 +117,6 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         var item = FileListViewSelected.Value;
         if (item is null) return;
         
-//System.Diagnostics.Debug.Print($"ダブルクリック{item.FullPath}");
         if ((item.Attribute & FileAttributes.Directory) != 0)
         {
             if (item.Name == "..")

@@ -58,6 +58,7 @@ public class FileSystemModel
             {
                 // 不可視属性を除く
                 if ((dir.Attributes & FileAttributes.Hidden) != 0) continue;
+                if ((dir.Attributes & FileAttributes.System) != 0) continue;
                 yield return new FileSystemModel.Info()
                 {
                     FullName = dir.FullName,
@@ -69,6 +70,7 @@ public class FileSystemModel
             {
                 // 不可視属性を除く
                 if ((file.Attributes & FileAttributes.Hidden) != 0) continue;
+                if ((file.Attributes & FileAttributes.System) != 0) continue;
                 yield return new FileSystemModel.Info()
                 {
                     FullName = file.FullName,
