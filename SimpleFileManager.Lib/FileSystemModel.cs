@@ -48,39 +48,37 @@ public class FileSystemModel
         {
             foreach(var file in DriveList)
             {
-                files.Add(file);
+                yield return file;
             }
-            return files;
-        }
+        } else {
+            DirectoryInfo directoryInfo = new (this.CurrentDirectory);
 
-        DirectoryInfo directoryInfo = new (this.CurrentDirectory);
-
-        // サブディレクトリの一覧を取得
-        foreach(var dir in directoryInfo.GetDirectories())
-        {
-            // 不可視属性を除く
-            if ((dir.Attributes & FileAttributes.Hidden) != 0) continue;
-            files.Add(new ()
+            // サブディレクトリの一覧を取得
+            foreach(var dir in directoryInfo.GetDirectories())
             {
-                FullName = dir.FullName,
-                Attributes = dir.Attributes,
-                LastModified = dir.LastWriteTime,
-            });
-        }
-        foreach(var file in directoryInfo.GetFiles())
-        {
-            // 不可視属性を除く
-            if ((file.Attributes & FileAttributes.Hidden) != 0) continue;
-            files.Add(new ()
+                // 不可視属性を除く
+                if ((dir.Attributes & FileAttributes.Hidden) != 0) continue;
+                yield return new FileSystemModel.Info()
+                {
+                    FullName = dir.FullName,
+                    Attributes = dir.Attributes,
+                    LastModified = dir.LastWriteTime,
+                };
+            }
+            foreach(var file in directoryInfo.GetFiles())
             {
-                FullName = file.FullName,
-                Attributes = file.Attributes,
-                Length = file.Length,
-                LastModified = file.LastWriteTime,
-            });
-        }
+                // 不可視属性を除く
+                if ((file.Attributes & FileAttributes.Hidden) != 0) continue;
+                yield return new FileSystemModel.Info()
+                {
+                    FullName = file.FullName,
+                    Attributes = file.Attributes,
+                    Length = file.Length,
+                    LastModified = file.LastWriteTime,
+                };
+            }
 
-        return files;        
+        }
     }
     /// <summary>
     /// 親ディレクトリへ移動

@@ -6,6 +6,7 @@ using System.IO;
 using Reactive.Bindings.Extensions;
 using Microsoft.VisualBasic;
 using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics;
 
 namespace SimpleFileManager.WPFApp;
 /// <summary>
@@ -49,10 +50,22 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     /// WindowLoadedCommand_Subscribe
     /// </summary>
     /// <param name="e"></param>
-    void WindowLoadedCommand_Subscribe(EventArgs e)
+    async void WindowLoadedCommand_Subscribe(EventArgs e)
     {
-        FileInfos.Clear();
+        if (0 < FileInfos.Count)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var v = FileInfos.ObserveResetChanged<int>().Subscribe(x=>
+            {
+                Debug.Print("クリア");
+                tcs.SetResult(true);
+            });
+            FileInfos.ClearOnScheduler();
+            await tcs.Task;
+            v.Dispose();
+        }
 
+        Debug.Print("追加");
         if (fileSystemModel.IsRoot() == false)
         {
             string parentDir = Path.GetDirectoryName(fileSystemModel.CurrentDirectory) ?? "/";
