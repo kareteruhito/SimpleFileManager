@@ -1,13 +1,12 @@
 using System.Data.SQLite;
+using System.IO;
 
 namespace SimpleFileManager.WPFApp;
 
 public class MyDatabase
 {
-    // データベースファイルパス
-    const string dbFilePath = @".\mydatabase.db";
     // データベース接続文字列
-    string connectionString = $"Data Source={dbFilePath};Version=3;";
+    string connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"mydatabase.db")};Version=3;";
     private static MyDatabase? _instance = null;
     private MyDatabase()
     {

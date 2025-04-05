@@ -10,6 +10,10 @@ using System.Reactive.Linq;
 
 using System.Windows.Media.Imaging;
 
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using System.Drawing;
+
 namespace SimpleFileManager.WPFApp;
 /// <summary>
 /// メインウィンドウビューモデル
@@ -35,7 +39,7 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     //@"\\celeron-n4000.local\archives",
     readonly Lib.FileSystemModel fileSystemModel = new()
     {
-        CurrentDirectory = @"C:\",
+        CurrentDirectory = @"F:\",
     };
     public ReactiveProperty<string> CurrentDirectory { get; }
 
@@ -46,11 +50,23 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     // Webアドレス
     public ReactiveProperty<string> WebAddr { get; set; } = new(@"");
     // ピクチャビュー表示・非表示
-    public ReactiveProperty<Visibility>
-    PictureViewVisibility { get; private set; } = new(Visibility.Collapsed);
+    public ReactiveProperty<Visibility> PictureViewVisibility { get; private set; } = new(Visibility.Collapsed);
     // ピクチャビュー
-    public ReactiveProperty<BitmapImage>
-    PictureView { get; private set; } = new(new BitmapImage());
+    public ReactiveProperty<BitmapSource> PictureView { get; private set; } = new(new BitmapImage());
+
+    // テキストプレビュー表示・非表示
+    public ReactiveProperty<Visibility> TextPreviewVisibility { get; private set; } = new(Visibility.Collapsed);
+    // テキストプレビュー
+    public ReactiveProperty<string> TextPreview { get; private set; } = new("");
+
+    // 音声再生表示・非表示
+    public ReactiveProperty<Visibility> AudioPlayButtonVisibility { get; private set; } = new(Visibility.Collapsed);
+    // 音声再生ボタン標示文字
+    public ReactiveProperty<string> AudioPlayButtonText { get; private set; } = new("▶");
+    // 音声再生ボタン
+    public ReactiveCommand AudioPlayButtonCommand { get; } = new();
+    // ドラックアンドドロップ用
+    public ReactiveCommand<System.Windows.Input.MouseEventArgs> MouseMoveCommand { get; }
 
     // データベース
     private MyDatabase _db = MyDatabase.GetInstance();
@@ -94,26 +110,100 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         });
 
         // ファイルリストビュー選択アイテムの購読
-        FileListViewSelected.Skip(1).Subscribe(e=>
+        FileListViewSelected.Skip(1).Subscribe(async e=>
         {
             if (e is null) return;
 
             string fullPath = e.FullPath;
-
-            // 画像のプレビュー表示
-            var bi = FileSystemManager.LoadImage(fullPath);
-            if (bi is not null)
+            /*
+            if (File.Exists(fullPath))
             {
-                PictureViewVisibility.Value = Visibility.Visible;
-                PictureView.Value = bi;
+                var dataObject = new DataObject(DataFormats.FileDrop, new[] { fullPath });
+                DragDrop.DoDragDrop( new BitmapImage(), dataObject, DragDropEffects.Copy);
             }
-            else
+            */
+
+            PictureViewVisibility.Value = Visibility.Collapsed;
+            PictureView.Value = new BitmapImage();
+            TextPreviewVisibility.Value = Visibility.Collapsed;
+            TextPreview.Value = "";
+            AudioPlayButtonVisibility.Value = Visibility.Collapsed;
+            AudioPlayButtonText.Value = "▶";
+
+            var extensionsType = FileSystemManager.GetExtensionsType(fullPath);
+
+            switch (extensionsType)
             {
-                PictureViewVisibility.Value = Visibility.Collapsed;
-                PictureView.Value = new BitmapImage();
+                case FileSystemManager.ExtensionsType.IMAGE:    // 画像
+                    PictureViewVisibility.Value = Visibility.Visible;
+                    PictureView.Value = await FileSystemManager.LoadImageAsync(fullPath);
+                    break;
+                case FileSystemManager.ExtensionsType.IMAGIC:    // 画像(ImageMagic)
+                    PictureViewVisibility.Value = Visibility.Visible;
+                    PictureView.Value = await FileSystemManager.LoadImageMagicAsync(fullPath);
+                    break;
+                case FileSystemManager.ExtensionsType.TEXT:     // テキスト
+                    TextPreviewVisibility.Value = Visibility.Visible;
+                    TextPreview.Value = await FileSystemManager.LoadTextAsync(fullPath);
+                    break;
+                case FileSystemManager.ExtensionsType.BINARY:     // バイナリ
+                    TextPreviewVisibility.Value = Visibility.Visible;
+                    TextPreview.Value = await FileSystemManager.LoadBinaryDumpAsync(fullPath);
+                    break;
+                case FileSystemManager.ExtensionsType.AUDIO:     // 音声
+                    AudioPlayButtonVisibility.Value = Visibility.Visible;
+                    break;
             }
         });
+        // 音声再生
+        AudioPlayButtonCommand.Subscribe(e=>
+        {
+            var filePath = FileListViewSelected.Value.FullPath;
+            if (!File.Exists(filePath)) return;
+            if (AudioPlayButtonText.Value == "■") return;
 
+            try
+            {
+                var waveOut = new WaveOutEvent();   // WaveOutの生成
+                IWaveProvider? audioFile;
+                string ext = Path.GetExtension(filePath).ToUpper();
+                if (ext == ".WAV" || ext == ".MP3")
+                {
+                    audioFile = new AudioFileReader(filePath);  // 再生ファイルオブジェクトの生成
+                } else {
+                    audioFile = new NAudio.Vorbis.VorbisWaveReader(filePath);
+                }
+
+                if (waveOut is null) return;
+                waveOut.Init(audioFile);    // 再生ファイルオブジェクトの初期化
+                waveOut.PlaybackStopped += (s, e) =>
+                {
+                    waveOut?.Dispose();
+                    AudioPlayButtonText.Value = "▶";
+                }; // 再生終了イベント登録
+                AudioPlayButtonText.Value = "■";
+                waveOut.Play(); // 再生
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"再生中にエラーが発生しました: {ex.Message}", "エラー");
+            }            
+        });
+
+        // ドラックアンドドロップ用
+        MouseMoveCommand = new ReactiveCommand<System.Windows.Input.MouseEventArgs>()
+            .WithSubscribe(e =>
+            {
+                if (e.LeftButton != System.Windows.Input.MouseButtonState.Pressed) return;
+                if (PictureViewVisibility.Value != Visibility.Visible) return;;
+                if (!Path.Exists(FileListViewSelected.Value.FullPath)) return;
+
+                var obj = (DependencyObject)e.Source;
+
+                var dataObject = new DataObject(DataFormats.FileDrop, new[] { FileListViewSelected.Value.FullPath });
+                DragDrop.DoDragDrop(obj, dataObject, DragDropEffects.Copy);
+            }
+        );
 
     }//MainWindowViewModel
 
@@ -123,6 +213,7 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     /// <param name="e"></param>
     void WindowLoadedCommand_Subscribe(EventArgs e)
     {
+       
     }
     /// <summary>
     /// FilesListViewDoubleClickCommand_Subscribe

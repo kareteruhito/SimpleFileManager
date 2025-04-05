@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleFileManager.WPFApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" FontSize="16"
+        Title="MainWindow" Height="1280" Width="1280" FontSize="16"
         xmlns:converter="clr-namespace:SimpleFileManager.WPFApp.Converter"
         xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
         xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
@@ -114,7 +114,7 @@
                                 </GridViewColumn>
             <!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName Comment-->
                                 <GridViewColumn Width="Auto"
-                                    behavior:ListViewSortBehavior.SortPropertyName="Comment"
+                                    behavior:ListViewSortBehavior.SortPropertyName="Comment.Value"
                                     Header="コメント">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
@@ -154,15 +154,44 @@
                             AllowDrop="True"
                             Margin = "10"
                             Grid.Row="2">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <interactivity:EventToReactiveCommand Command="{Binding MouseMoveCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+<!-- 画像プレビュー ここから -->
                             <Image
                                 Visibility="{Binding PictureViewVisibility.Value}"
                                 Source="{Binding PictureView.Value}" />
+<!-- 画像プレビュー ここまで -->
                             <!--
                             <wv2:WebView2
                                 Width="256"
                                 x:Name="webView"
                                 Source="{Binding WebAddr.Value}" />
                             -->
+<!-- テキストプレビュー ここから -->
+                            <TextBox
+                                IsReadOnly="True"
+                                FontFamily="Consolas" 
+                                FontSize="14"
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                VerticalContentAlignment="Top"
+                                Width = "600"                                
+                                Height = "400"                                
+                                Visibility="{Binding TextPreviewVisibility.Value}"
+                                Text="{Binding TextPreview.Value}" />
+<!-- テキストプレビュー ここまで -->
+<!-- 音声再生 ここから -->
+                            <Button
+                                FontSize="32"
+                                Width = "256"                                
+                                Height = "256"
+                                Command="{Binding AudioPlayButtonCommand}"                                
+                                Visibility="{Binding AudioPlayButtonVisibility.Value}"
+                                Content="{Binding AudioPlayButtonText.Value}" />
+<!-- 音声再生 ここまで -->
                         </DockPanel> 
                     </Grid>
                 </DockPanel>
