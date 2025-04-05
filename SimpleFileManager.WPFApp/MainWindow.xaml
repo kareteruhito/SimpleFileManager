@@ -9,7 +9,8 @@
         xmlns:converter="clr-namespace:SimpleFileManager.WPFApp.Converter"
         xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
         xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
-        xmlns:behavior="clr-namespace:SimpleFileManager.WPFApp.Behavior">
+        xmlns:behavior="clr-namespace:SimpleFileManager.WPFApp.Behavior"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf">
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
@@ -29,66 +30,144 @@
     </i:Interaction.Triggers>
 
     <Grid>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top">
+                <Menu FontSize="16" Margin="2">
+                    <MenuItem Header="File">
+                        <MenuItem Header="Close" />
+                    </MenuItem>
+                </Menu>
+                <DockPanel>
+                    <ComboBox Margin="2" IsEditable="True"
+                        ItemsSource="{Binding DriveList}"
+                        Text="{Binding AddressBar.Value}">
+                    </ComboBox>
+                </DockPanel>
+            </StackPanel>
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem Content="ステータス" />
+            </StatusBar>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0">
 
-        <ListView
-            x:Name="FileListView"
-            ItemsSource="{Binding FileInfos}"
-            SelectedValue ="{Binding FileListViewSelected.Value}">
-<!-- ソートビヘイビア ここから -->
-            <i:Interaction.Behaviors>
-                <behavior:ListViewSortBehavior />
-            </i:Interaction.Behaviors>
-<!-- ソートビヘイビア ここまで -->
-            <ListView.Resources>
-                <Style x:Key="listviewHeaderStyle" TargetType="GridViewColumnHeader">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.Resources>
+                    <ListView
+                        x:Name="FileListView"
+                        IsSynchronizedWithCurrentItem="True" 
+                        ItemsSource="{Binding FileInfos}"
+                        SelectedValue ="{Binding FileListViewSelected.Value}">
+            <!-- ソートビヘイビア ここから -->
+                        <i:Interaction.Behaviors>
+                            <behavior:ListViewSortBehavior />
+                        </i:Interaction.Behaviors>
+            <!-- ソートビヘイビア ここまで -->
+                        <ListView.Resources>
+                            <Style x:Key="listviewHeaderStyle" TargetType="GridViewColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.Resources>
 
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <interactivity:EventToReactiveCommand Command="{Binding FilesListViewDoubleClickCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <interactivity:EventToReactiveCommand Command="{Binding FilesListViewDoubleClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
 
-            <ListView.View>
-                <GridView ColumnHeaderContainerStyle="{StaticResource listviewHeaderStyle}">
-<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName SortName-->
-                    <GridViewColumn Width="300"
-                        behavior:ListViewSortBehavior.SortPropertyName="SortName"
-                        Header="名前">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Width="32" Height="32" Source="{Binding Icon}"></Image>
-                                    <TextBlock Width="Auto" TextAlignment="Left" Text="{Binding Name}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName LastModified-->
-                    <GridViewColumn Width="Auto"
-                        behavior:ListViewSortBehavior.SortPropertyName="LastModified"
-                        Header="更新日時">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Width="130" TextAlignment="Right" Text="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-<!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName Length-->
-                    <GridViewColumn Width="Auto"
-                        behavior:ListViewSortBehavior.SortPropertyName="Length"
-                        Header="サイズ">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Width="120" TextAlignment="Right" Text="{Binding Length, Converter={StaticResource DateSizeConverter}}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+                        <ListView.View>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource listviewHeaderStyle}">
+            <!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName SortName-->
+                                <GridViewColumn Width="300"
+                                    behavior:ListViewSortBehavior.SortPropertyName="SortName"
+                                    Header="名前">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Width="32" Height="32" Source="{Binding Icon}"></Image>
+                                                <TextBlock Width="Auto" TextAlignment="Left" Text="{Binding Name}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+            <!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName LastModified-->
+                                <GridViewColumn Width="Auto"
+                                    behavior:ListViewSortBehavior.SortPropertyName="LastModified"
+                                    Header="更新日時">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="130" TextAlignment="Right" Text="{Binding LastModified, Converter={StaticResource DateTimeConverter}}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+            <!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName Length-->
+                                <GridViewColumn Width="Auto"
+                                    behavior:ListViewSortBehavior.SortPropertyName="Length"
+                                    Header="サイズ">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="120" TextAlignment="Right" Text="{Binding Length, Converter={StaticResource DateSizeConverter}}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+            <!-- ソートビヘイビア ListViewSortBehavior.SortPropertyName Comment-->
+                                <GridViewColumn Width="Auto"
+                                    behavior:ListViewSortBehavior.SortPropertyName="Comment"
+                                    Header="コメント">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="300" TextAlignment="Left" Text="{Binding Comment.Value}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
+                <DockPanel Grid.Column="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel
+                            Margin="10"
+                            Grid.Row="0">
+                            <Label>コメント</Label>
+                            <TextBox
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                VerticalContentAlignment="Top"
+                                Height = "400"
+                                Text="{Binding FileInfos/Comment.Value}">
+                            </TextBox>
+
+                        </StackPanel> 
+                        <GridSplitter
+                            Grid.Row="1"
+                            HorizontalAlignment="Stretch" />        
+                        <DockPanel
+                            AllowDrop="True"
+                            Margin = "10"
+                            Grid.Row="2">
+                            <Image
+                                Visibility="{Binding PictureViewVisibility.Value}"
+                                Source="{Binding PictureView.Value}" />
+                            <!--
+                            <wv2:WebView2
+                                Width="256"
+                                x:Name="webView"
+                                Source="{Binding WebAddr.Value}" />
+                            -->
+                        </DockPanel> 
+                    </Grid>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
 
     </Grid>
 </Window>

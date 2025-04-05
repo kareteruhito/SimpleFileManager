@@ -5,3 +5,4 @@ SimpleFileManager.Lib/obj/
 SimpleFileManager.WPFApp/bin/
 SimpleFileManager.WPFApp/obj/
 *.log
+mydatabase.db

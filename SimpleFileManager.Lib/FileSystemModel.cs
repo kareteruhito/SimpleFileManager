@@ -1,10 +1,15 @@
+using System.ComponentModel;
+
 namespace SimpleFileManager.Lib;
 
 /// <summary>
 /// ファイルシステムモデルクラス
 /// </summary>
-public class FileSystemModel
+public class FileSystemModel : INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged(string name)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     const string VIRTUAL_ROOT = "MyComputer";
     /// <summary>
     /// ファイル情報クラス
@@ -34,7 +39,10 @@ public class FileSystemModel
         }
         set
         {
+            if (_currentDirectory == value) return;
+            
             _currentDirectory = value;
+            this.OnPropertyChanged("CurrentDirectory");
         }
     }
     /// <summary>
@@ -137,4 +145,17 @@ public class FileSystemModel
     /// </summary>
     /// <returns>bool</returns>
     public bool IsRoot() => (this.CurrentDirectory == VIRTUAL_ROOT);
+
+    /// <summary>
+    /// カレントディレクトリのファイルの一覧を取得
+    /// </summary>
+    /// <returns>IEnumerable<string></returns>
+    public IEnumerable<FileSystemModel.Info> GetDrives()
+    {
+        foreach(var file in DriveList)
+        {
+            yield return file;
+        }
+    }
+
 }//class

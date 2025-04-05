@@ -1,9 +1,22 @@
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
+using System.Reactive.Disposables;
+using Reactive.Bindings;
 
 namespace SimpleFileManager.WPFApp;
 
-public class FileInfoEntity
+public class FileInfoEntity : INotifyPropertyChanged, IDisposable
 {
+#region 
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged(string name)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    private CompositeDisposable Disposable { get; } = new ();
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose() => this.Disposable.Dispose();
+#endregion
     public BitmapSource Icon { get; set; } = new BitmapImage();
     public string FullPath { get; set; } = "";
     public string Name { get; set; } = "";
@@ -30,4 +43,6 @@ public class FileInfoEntity
             return prefix + Name;
         }
     }
+    public ReactiveProperty<string> Comment {get; set;} = new("");
+    
 }
