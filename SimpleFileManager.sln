@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.Lib", "SimpleFileManager.Lib\SimpleFileManager.Lib.csproj", "{1F260077-4D9B-4009-9FEA-AA90D72511CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.Lib", "Lib\SimpleFileManager.Lib.csproj", "{1F260077-4D9B-4009-9FEA-AA90D72511CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.ConsoleApp", "SimpleFileManager.ConsoleApp\SimpleFileManager.ConsoleApp.csproj", "{C77AD124-28F3-454E-9691-247B95D1144C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.ConsoleApp", "ConsoleApp\SimpleFileManager.ConsoleApp.csproj", "{C77AD124-28F3-454E-9691-247B95D1144C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.WPFApp", "SimpleFileManager.WPFApp\SimpleFileManager.WPFApp.csproj", "{1D7EC149-3C48-4AA1-B01F-CC38E8191E6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFileManager.WPFApp", "WPFApp\SimpleFileManager.WPFApp.csproj", "{1D7EC149-3C48-4AA1-B01F-CC38E8191E6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

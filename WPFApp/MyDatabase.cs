@@ -6,11 +6,13 @@ namespace SimpleFileManager.WPFApp;
 public class MyDatabase
 {
     // データベース接続文字列
-    string connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"mydatabase.db")};Version=3;";
+    //string connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"mydatabase.db")};Version=3;";
+    string _ConnectionString = "";
     private static MyDatabase? _instance = null;
-    private MyDatabase()
+    private MyDatabase(string connectionString)
     {
-        using var connection = new SQLiteConnection(connectionString);
+        _ConnectionString = connectionString;
+        using var connection = new SQLiteConnection(_ConnectionString);
         // データベース接続を開く
         connection.Open();        
         // テーブル作成SQLクエリ
@@ -26,11 +28,11 @@ public class MyDatabase
         command.ExecuteNonQuery();
     }
     // インスタンスの取得
-    public static MyDatabase GetInstance()
+    public static MyDatabase GetInstance(string connectionString)
     {
         if (_instance is null)
         {
-            _instance = new MyDatabase();
+            _instance = new MyDatabase(connectionString);
         }
         return _instance;
     }
@@ -39,7 +41,7 @@ public class MyDatabase
     {
         List<Dictionary<string, object>> records = new();
 
-        using var connection = new SQLiteConnection(connectionString);
+        using var connection = new SQLiteConnection(_ConnectionString);
         connection.Open();
 
         string selectQuery = $"SELECT * FROM Files;";
@@ -60,7 +62,7 @@ public class MyDatabase
     // レコードの有無
     public bool Exits(string fullPath)
     {
-        using var connection = new SQLiteConnection(connectionString);
+        using var connection = new SQLiteConnection(_ConnectionString);
         connection.Open();
 
         string selectQuery = $"SELECT COUNT(*) FROM Files WHERE FullPath = @fullPath;";
@@ -73,7 +75,7 @@ public class MyDatabase
     // レコードの追加・更新
     public int InsertOrUpdate(string fullPath, string comment)
     {
-        using var connection = new SQLiteConnection(connectionString);
+        using var connection = new SQLiteConnection(_ConnectionString);
         connection.Open();
 
         string upsertQuery  = $@"
@@ -91,7 +93,7 @@ public class MyDatabase
     // レコードの削除
     public int Remove(string fullPath)
     {
-        using var connection = new SQLiteConnection(connectionString);
+        using var connection = new SQLiteConnection(_ConnectionString);
         connection.Open();
 
         string upsertQuery  = $@"
@@ -109,7 +111,7 @@ public class MyDatabase
     // コメントの取得
     public string GetComment(string fullPath)
     {
-        using var connection = new SQLiteConnection(connectionString);
+        using var connection = new SQLiteConnection(_ConnectionString);
         connection.Open();
 
         string selectQuery = $"SELECT Comment FROM Files WHERE FullPath = @fullPath;";

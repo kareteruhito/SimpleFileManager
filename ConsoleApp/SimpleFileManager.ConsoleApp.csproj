@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleFileManager.Lib\SimpleFileManager.Lib.csproj" />
+    <ProjectReference Include="..\Lib\SimpleFileManager.Lib.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

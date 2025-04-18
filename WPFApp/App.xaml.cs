@@ -1,9 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
-using IniParser;
-using IniParser.Model;
-using System.IO;
+﻿using System.Windows;
 
 namespace SimpleFileManager.WPFApp;
 
@@ -12,5 +7,11 @@ namespace SimpleFileManager.WPFApp;
 /// </summary>
 public partial class App : Application
 {
+    public string ConnectionString {get; private set;} = "";
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        string dbFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"mydatabase.db");
+        this.ConnectionString = $"Data Source={dbFile};Version=3;";
+    }
 }
 

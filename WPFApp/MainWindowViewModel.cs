@@ -65,17 +65,30 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     public ReactiveProperty<string> AudioPlayButtonText { get; private set; } = new("▶");
     // 音声再生ボタン
     public ReactiveCommand AudioPlayButtonCommand { get; } = new();
+
+    // 動画再生表示・非表示
+    public ReactiveProperty<Visibility> MediaPlayVisibility { get; private set; } = new(Visibility.Collapsed);
+    // 動画再生
+    public ReactiveProperty<string> MediaPlay { get; private set; } = new("");
+
+
+
     // ドラックアンドドロップ用
     public ReactiveCommand<System.Windows.Input.MouseEventArgs> MouseMoveCommand { get; }
 
     // データベース
-    private MyDatabase _db = MyDatabase.GetInstance();
+    private MyDatabase _db;
+
+
+
+
 
     /// <summary>
     /// コンストラクタ
     /// </summary>
     public MainWindowViewModel()
     {
+        _db = MyDatabase.GetInstance(((App)Application.Current).ConnectionString);
         WindowLoadedCommand.Subscribe(e => WindowLoadedCommand_Subscribe(e))
             .AddTo(this.Disposable);
         
@@ -129,6 +142,8 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             TextPreview.Value = "";
             AudioPlayButtonVisibility.Value = Visibility.Collapsed;
             AudioPlayButtonText.Value = "▶";
+            MediaPlayVisibility.Value = Visibility.Collapsed;
+            MediaPlay.Value="";
 
             var extensionsType = FileSystemManager.GetExtensionsType(fullPath);
 
@@ -152,6 +167,10 @@ public class MainWindowViewModel : INotifyPropertyChanged, IDisposable
                     break;
                 case FileSystemManager.ExtensionsType.AUDIO:     // 音声
                     AudioPlayButtonVisibility.Value = Visibility.Visible;
+                    break;
+                case FileSystemManager.ExtensionsType.VIDEO:     // 動画
+                    PictureViewVisibility.Value = Visibility.Visible;
+                    PictureView.Value = await FileSystemManager.LoadThumbnailFromVideoAsync(fullPath);
                     break;
             }
         });

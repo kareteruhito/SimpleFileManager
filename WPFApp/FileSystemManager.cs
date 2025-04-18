@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using ImageMagick;
 using System.DirectoryServices;
 
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
+
 namespace SimpleFileManager.WPFApp;
 
 /// <summary>
@@ -23,13 +26,15 @@ class FileSystemManager
         IMAGIC,
         BINARY,
         AUDIO,
+        VIDEO,
         DIRECTORY,
         NONE,
     };
     const string _imgPattern = @"\.(png|bmp|jpg|jpeg)$";
     const string _txtPattern = @"\.(txt|html|cs|xaml)$";
     const string _wavPattern = @"\.(wav|ogg|mp3|mid)$";
-    const string _imagicPattern = @"\.(psd|xcf|webp|webm|avi|svg|mp4|gif)$";
+    const string _imagicPattern = @"\.(psd|xcf|webp|svg|gif)$";
+    const string _videoPattern = @"\.(webm|avi|mp4)$";
     // 拡張子タイプを取得
     public static ExtensionsType GetExtensionsType(string path)
     {
@@ -52,6 +57,10 @@ class FileSystemManager
         if (Regex.IsMatch(path, _imagicPattern, RegexOptions.IgnoreCase))
         {
             return ExtensionsType.IMAGIC;
+        }
+        if (Regex.IsMatch(path, _videoPattern, RegexOptions.IgnoreCase))
+        {
+            return ExtensionsType.VIDEO;
         }
         return ExtensionsType.BINARY;
     }
@@ -195,6 +204,37 @@ class FileSystemManager
                 var bs = mi.ToBitmapSource();
                 bs.Freeze();
                 return bs;
+            });
+        }
+        catch (Exception ex)
+        {
+            Debug.Print($"ファイルの読み込み中にエラーが発生しました: {ex.Message}");
+        }
+
+        return result;
+    }
+    // 動画ファイルのサムネイルを取得
+    public static async Task<BitmapSource> LoadThumbnailFromVideoAsync(string path)
+    {
+        BitmapSource result = new BitmapImage();
+
+        try {
+            result = await Task.Run(()=>
+            {
+                BitmapSource? result = null;
+
+                using var mat = new Mat();
+                using var vc = new VideoCapture(path);
+                if (vc.Read(mat))
+                {
+                    if (mat.IsContinuous())
+                    {
+                        result = WriteableBitmapConverter.ToWriteableBitmap(mat);
+                    }
+                }
+                result ??= new BitmapImage();
+                result.Freeze();
+                return result;
             });
         }
         catch (Exception ex)
