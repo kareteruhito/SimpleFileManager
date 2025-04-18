@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/SimpleFileManager.ConsoleApp/SimpleFileManager.ConsoleApp.csproj",
+                "${workspaceFolder}/ConsoleApp/SimpleFileManager.ConsoleApp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/SimpleFileManager.WPFApp/SimpleFileManager.WPFApp.csproj",
+                "${workspaceFolder}/WPFApp/SimpleFileManager.WPFApp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -31,7 +31,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/SimpleFileManager.ConsoleApp/SimpleFileManager.ConsoleApp.csproj",
+                "${workspaceFolder}/ConsoleApp/SimpleFileManager.ConsoleApp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -45,7 +45,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/SimpleFileManager.ConsoleApp/SimpleFileManager.ConsoleApp.csproj"
+                "${workspaceFolder}/ConsoleApp/SimpleFileManager.ConsoleApp.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

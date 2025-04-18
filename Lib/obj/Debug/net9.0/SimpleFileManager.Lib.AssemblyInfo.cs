@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleFileManager.Lib")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f90918b814ac48e1f04b37e14989f21922351fea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f372bedb37e4ef486deb08d277d3550ae33c5383")]
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleFileManager.Lib")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleFileManager.Lib")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
