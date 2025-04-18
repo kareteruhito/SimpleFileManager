@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleFileManager.ConsoleApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc3a08f5ba243b75b94e2b22f354f6ea820537c1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+715aa7fb9a79199a36cdaa0d802d01152b574b95")]
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleFileManager.ConsoleApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleFileManager.ConsoleApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
