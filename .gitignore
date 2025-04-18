@@ -1,8 +1,8 @@
-SimpleFileManager.ConsoleApp/bin/
-SimpleFileManager.ConsoleApp/obj/
-SimpleFileManager.Lib/bin/
-SimpleFileManager.Lib/obj/
-SimpleFileManager.WPFApp/bin/
-SimpleFileManager.WPFApp/obj/
+ConsoleApp/bin/
+ConsoleApp/obj/
+Lib/bin/
+Lib/obj/
+WPFApp/bin/
+WPFApp/obj/
 *.log
 mydatabase.db

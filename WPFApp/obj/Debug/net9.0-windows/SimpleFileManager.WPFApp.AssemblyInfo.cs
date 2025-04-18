@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleFileManager.WPFApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+881db393503bd1d1b36d74a44fb5cb4dc9cf53a3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f90918b814ac48e1f04b37e14989f21922351fea")]
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleFileManager.WPFApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleFileManager.WPFApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
